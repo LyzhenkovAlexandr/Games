@@ -1,3 +1,5 @@
+package games;
+
 import games.*;
 
 public class StartGame {
