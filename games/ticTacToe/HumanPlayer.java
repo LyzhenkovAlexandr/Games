@@ -1,4 +1,7 @@
-package games;
+package games.ticTacToe;
+
+import games.Move;
+import games.Player;
 
 import java.io.PrintStream;
 import java.util.Scanner;
@@ -17,7 +20,7 @@ public class HumanPlayer implements Player {
     }
 
     @Override
-    public Move move(int x, int y) {
+    public Move move(int xSize, int ySize) {
         int row = in.nextInt() - 1;
         int col = in.nextInt() - 1;
         return new Move(row, col);
