@@ -79,6 +79,17 @@ public class TicTacToe implements Game {
         rules.setCountCrossedCells(count);
     }
 
+    public void changeOrderMove(final Comparator<Player> comp) {
+        playerList.sort(comp);
+    }
+
+    public void replaceAllPlayers(final Player... players) {
+        Objects.requireNonNull(players);
+        checkDuplicateTurn(players);
+        playerList.clear();
+        Collections.addAll(playerList, players);
+    }
+
     public void printRules() {
         System.out.println(rules.getInfo());
     }

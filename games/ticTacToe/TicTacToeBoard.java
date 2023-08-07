@@ -3,21 +3,15 @@ package games.ticTacToe;
 import games.*;
 import games.figures.E;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 // This class is responsible for the behavior of the board itself, all proposed changes are first checked for correctness
-class TicTacToeBoard implements Board {
-    private Figure[][] field;
-    private final TicTacToeRules rules;
+class TicTacToeBoard extends AbstractBoard {
     private long countFreeCells;
-    private final Figure neutralFigure = new E();
 
     public TicTacToeBoard(TicTacToeRules rules) {
-        Objects.requireNonNull(rules);
-        this.rules = rules;
+        super(new Figure[rules.getySize()][rules.getxSize()], rules, new E());
         this.countFreeCells = (long) rules.getxSize() * rules.getySize();
-        this.field = new Figure[rules.getySize()][rules.getxSize()];
     }
 
 
@@ -31,23 +25,6 @@ class TicTacToeBoard implements Board {
         countFreeCells--;
         Result res = checkWin(player);
         return res;
-    }
-
-    @Override
-    public void clearBoard() {
-        for (Figure[] row : field) {
-            Arrays.fill(row, neutralFigure);
-        }
-    }
-
-    @Override
-    public AbstractRules getRules() {
-        return rules;
-    }
-
-    @Override
-    public Figure[][] getField() {
-        return field;
     }
 
     private Result checkWin(final Player player) {
