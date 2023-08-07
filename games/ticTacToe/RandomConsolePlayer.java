@@ -1,12 +1,13 @@
 package games.ticTacToe;
 
+import games.Figure;
 import games.Move;
 
 import java.util.Random;
 
 public class RandomConsolePlayer extends AbstractConsolePlayer {
-    public RandomConsolePlayer() {
-        super("RandomPlayer", Integer.MAX_VALUE);
+    public RandomConsolePlayer(Figure figure) {
+        super("RandomPlayer", Integer.MAX_VALUE, figure);
     }
 
     private final Random random = new Random();

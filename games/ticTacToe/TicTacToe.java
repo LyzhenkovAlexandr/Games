@@ -1,13 +1,9 @@
 package games.ticTacToe;
 
-import games.Game;
-import games.Move;
-import games.Player;
-import games.Result;
+import games.*;
+import games.exceptions.GameDuplicateException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class TicTacToe implements Game {
     private final TicTacToeBoard board;
@@ -23,6 +19,7 @@ public class TicTacToe implements Game {
         if (players.length < 1) {
             throw new IllegalArgumentException("Expected at least one player");
         }
+        checkDuplicateTurn(players);
         this.board = new TicTacToeBoard(rules);
         this.rules = rules;
         this.playerList = new ArrayList<>(List.of(players));
@@ -37,7 +34,7 @@ public class TicTacToe implements Game {
         while (true) {
             Player player = playerList.get(index);
             Move movePlayer = player.move(rules.getxSize(), rules.getySize());
-            Result result = board.makeMove(movePlayer);
+            Result result = board.makeMove(player, movePlayer);
             switch (result) {
                 case UNKNOWN -> {
                 }
@@ -84,5 +81,15 @@ public class TicTacToe implements Game {
 
     public void printRules() {
         System.out.println(rules.getInfo());
+    }
+
+    private void checkDuplicateTurn(final Player[] players) {
+        final Set<String> set = new HashSet<>();
+        for (Player player: players) {
+            set.add(player.getFigure().getTurn());
+        }
+        if (players.length != set.size()) {
+            throw new GameDuplicateException("Contains players with the same pieces");
+        }
     }
 }

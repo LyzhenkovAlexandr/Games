@@ -9,14 +9,9 @@ import java.util.Scanner;
 abstract class AbstractConsolePlayer extends AbstractPlayer {
     protected final Scanner in = new Scanner(System.in);
     protected final PrintStream out = System.out;
-    private final Map<Cell, Character> CELL_TO_STRING = Map.of(
-            Cell.X, 'X',
-            Cell.O, 'O',
-            Cell.E, '.'
-    );
 
-    protected AbstractConsolePlayer(String name, int age) {
-        super(name, age);
+    protected AbstractConsolePlayer(String name, int age, Figure figure) {
+        super(name, age, figure);
     }
 
     public void drawBoard(Board board) {
@@ -31,7 +26,7 @@ abstract class AbstractConsolePlayer extends AbstractPlayer {
         for (int r = 0; r < rules.getySize(); r++) {
             s.append(r + 1).append("|");
             for (int c = 0; c < rules.getxSize(); c++) {
-                s.append(CELL_TO_STRING.get(board.getField()[r][c]));
+                s.append(board.getField()[r][c].getTurn());
             }
             s.append("\n");
         }

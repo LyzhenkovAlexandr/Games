@@ -2,11 +2,11 @@ package games;
 
 
 public interface Board {
-    Result makeMove(final Move move);
+    Result makeMove(final Player player, final Move move);
 
     AbstractRules getRules();
 
-    Cell[][] getField();
+    Figure[][] getField();
 
     void clearBoard();
 }
