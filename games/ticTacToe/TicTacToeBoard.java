@@ -1,32 +1,29 @@
 package games.ticTacToe;
 
-import games.Board;
-import games.Cell;
-import games.Move;
-import games.Result;
+import games.*;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 
+// This class is responsible for the behavior of the board itself, all proposed changes are first checked for correctness
 class TicTacToeBoard implements Board {
     private Cell[][] field;
     private final TicTacToeRules rules;
-    private int countFreeCells;
+    private long countFreeCells;
     private Cell turn = Cell.X;
-    private final Map<Cell, Character> CELL_TO_STRING = Map.of(
-            Cell.X, 'X',
-            Cell.O, 'O',
-            Cell.E, '.'
-    );
 
     public TicTacToeBoard(TicTacToeRules rules) {
+        Objects.requireNonNull(rules);
         this.rules = rules;
+        this.countFreeCells = (long) rules.getxSize() * rules.getySize();
         this.field = new Cell[rules.getySize()][rules.getxSize()];
     }
 
 
     @Override
     public Result makeMove(Move move) {
+        Objects.requireNonNull(move);
         if (!isValid(move)) {
             return Result.LOSE;
         }
@@ -45,58 +42,53 @@ class TicTacToeBoard implements Board {
     }
 
     @Override
-    public String draw() {
-        StringBuilder s = new StringBuilder("  ");
-        for (int i = 1; i <= rules.getxSize(); i++) {
-            s.append(i);
-        }
-        s.append("%n  ");
-        for (int i = 0; i < rules.getxSize(); i++) {
-            s.append('_');
-        }
-        s.append("%n");
-        for (int r = 0; r < rules.getySize(); r++) {
-            s.append(r + 1).append("|");
-            for (int c = 0; c < rules.getxSize(); c++) {
-                s.append(CELL_TO_STRING.get(field[r][c]));
-            }
-            s.append("%n");
-        }
-        return s.toString();
+    public AbstractRules getRules() {
+        return rules;
+    }
+
+    @Override
+    public Cell[][] getField() {
+        return field;
     }
 
     private Result checkWin() {
-        for (int i = 0; i < rules.getxSize() - rules.getCountCrossedCells() + 1; i++) {
-            for (int j = 0; j < rules.getySize() - rules.getCountCrossedCells() + 1; j++) {
+        for (int i = 0; i < rules.getySize(); i++) {
+            for (int j = 0; j < rules.getxSize(); j++) {
                 boolean win = true;
-                for (int k = 0; k < rules.getCountCrossedCells(); k++) {
-                    if (field[i][j + k] != turn) {
-                        win = false;
-                        break;
+                if (j + rules.getCountCrossedCells() - 1 < rules.getxSize()) {
+                    for (int k = 0; k < rules.getCountCrossedCells(); k++) {
+                        if (field[i][j + k] != turn) {
+                            win = false;
+                            break;
+                        }
                     }
-                }
-                if (win) {
-                    return Result.WIN;
-                }
-                win = true;
-                for (int k = 0; k < rules.getCountCrossedCells(); k++) {
-                    if (field[i + k][j + k] != turn) {
-                        win = false;
-                        break;
+                    if (win) {
+                        return Result.WIN;
                     }
+                    win = true;
                 }
-                if (win) {
-                    return Result.WIN;
-                }
-                win = true;
-                for (int k = 0; k < rules.getCountCrossedCells(); k++) {
-                    if (field[i + k][j] != turn) {
-                        win = false;
-                        break;
+                if (i + rules.getCountCrossedCells() - 1 < rules.getySize() && j + rules.getCountCrossedCells() - 1 < rules.getxSize()) {
+                    for (int k = 0; k < rules.getCountCrossedCells(); k++) {
+                        if (field[i + k][j + k] != turn) {
+                            win = false;
+                            break;
+                        }
                     }
+                    if (win) {
+                        return Result.WIN;
+                    }
+                    win = true;
                 }
-                if (win) {
-                    return Result.WIN;
+                if (i + rules.getCountCrossedCells() - 1 < rules.getySize()) {
+                    for (int k = 0; k < rules.getCountCrossedCells(); k++) {
+                        if (field[i + k][j] != turn) {
+                            win = false;
+                            break;
+                        }
+                    }
+                    if (win) {
+                        return Result.WIN;
+                    }
                 }
             }
         }
@@ -105,18 +97,15 @@ class TicTacToeBoard implements Board {
         }
         return Result.UNKNOWN;
     }
-    // Pred: x > 0 && y > 0
-    // Post: isValid move?
 
     private boolean isValid(Move move) {
-        return 0 <= move.getRow() && move.getRow() < rules.getxSize() &&
-                0 <= move.getCol() && move.getCol() < rules.getySize() &&
+        return 0 <= move.getRow() && move.getRow() < rules.getySize() &&
+                0 <= move.getCol() && move.getCol() < rules.getxSize() &&
                 field[move.getRow()][move.getCol()] == Cell.E;
     }
 
-    void changeFieldSize() {
+    void updateFieldSize() {
         field = new Cell[rules.getySize()][rules.getxSize()];
+        countFreeCells = (long) rules.getxSize() * rules.getySize();
     }
-
-
 }

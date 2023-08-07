@@ -4,7 +4,9 @@ package games;
 public interface Board {
     Result makeMove(final Move move);
 
-    void clearBoard();
+    AbstractRules getRules();
 
-    String draw();
+    Cell[][] getField();
+
+    void clearBoard();
 }

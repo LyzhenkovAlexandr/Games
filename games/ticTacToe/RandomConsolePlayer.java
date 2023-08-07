@@ -1,11 +1,14 @@
 package games.ticTacToe;
 
 import games.Move;
-import games.Player;
 
 import java.util.Random;
 
-public class RandomPlayer implements Player {
+public class RandomConsolePlayer extends AbstractConsolePlayer {
+    public RandomConsolePlayer() {
+        super("RandomPlayer", Integer.MAX_VALUE);
+    }
+
     private final Random random = new Random();
     @Override
     public Move move(final int xSize, final int ySize) {

@@ -7,6 +7,7 @@ import games.Result;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class TicTacToe implements Game {
     private final TicTacToeBoard board;
@@ -18,6 +19,10 @@ public class TicTacToe implements Game {
     }
 
     public TicTacToe(TicTacToeRules rules, Player... players) {
+        Objects.requireNonNull(rules);
+        if (players.length < 1) {
+            throw new IllegalArgumentException("Expected at least one player");
+        }
         this.board = new TicTacToeBoard(rules);
         this.rules = rules;
         this.playerList = new ArrayList<>(List.of(players));
@@ -26,7 +31,8 @@ public class TicTacToe implements Game {
     @Override
     public Player play() {
         board.clearBoard();
-        System.out.printf(board.draw() + "Player #1 please make a move:%n%n");
+        playerList.get(0).drawBoard(board);
+        System.out.printf("Player #1 please make a move:%n%n");
         int index = 0;
         while (true) {
             Player player = playerList.get(index);
@@ -36,7 +42,8 @@ public class TicTacToe implements Game {
                 case UNKNOWN -> {
                 }
                 case WIN -> {
-                    System.out.printf("Player #%d made a move (%d, %d) and he is won%n" + board.draw(), index + 1, movePlayer.getRow() + 1, movePlayer.getCol() + 1);
+                    System.out.printf("Player #%d made a move (%d, %d) and he is won%n", index + 1, movePlayer.getRow() + 1, movePlayer.getCol() + 1);
+                    player.drawBoard(board);
                     return player;
                 }
                 case LOSE -> {
@@ -44,24 +51,26 @@ public class TicTacToe implements Game {
                     continue;
                 }
                 case DRAW -> {
-                    System.out.printf("Player #%d made a move (%d, %d) and it was a draw%n" + board.draw(), index + 1, movePlayer.getRow() + 1, movePlayer.getCol() + 1);
+                    System.out.printf("Player #%d made a move (%d, %d) and it was a draw%n", index + 1, movePlayer.getRow() + 1, movePlayer.getCol() + 1);
+                    player.drawBoard(board);
                     return null;
                 }
                 default -> throw new IllegalArgumentException("Unexpected result: " + result);
             }
-            System.out.printf("Player #%d made a move (%d, %d)%n" + board.draw(), index + 1, movePlayer.getRow() + 1, movePlayer.getCol() + 1);
+            System.out.printf("Player #%d made a move (%d, %d)%n", index + 1, movePlayer.getRow() + 1, movePlayer.getCol() + 1);
+            player.drawBoard(board);
             index = (index + 1) % playerList.size();
             System.out.printf("Player #%d please make a move:%n%n", index + 1);
         }
     }
 
     public void changeBoardSize(final int x, final int y) {
-        if (x < 1 || y < 1) {
-            throw new IllegalArgumentException("Field dimensions must be positive and integer");
+        if (x < rules.getMinxSize() || y < rules.getMinySize() || x > rules.getMaxxSize() || y > rules.getMaxySize()) {
+            throw new IllegalArgumentException("The field sizes must be positive integers and within the allowed values.");
         }
         rules.setxSize(x);
         rules.setySize(y);
-        board.changeFieldSize();
+        board.updateFieldSize();
     }
 
     public void changeCountCrossedCells(final int count) {
